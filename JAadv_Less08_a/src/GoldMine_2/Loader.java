@@ -1,37 +1,38 @@
-package GoldMine;
+package GoldMine_2;
 
-import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 
 public class Loader implements Runnable{
 
 	private MoneyHeap heap;
 	private Cart cart;
-	private Exchanger<Cart> exLoTr;
 	
-	public Loader(MoneyHeap heap, Cart cart, Exchanger<Cart> exLoTr) {
+	
+	public Loader(MoneyHeap heap, Cart cart) {
 		this.heap = heap;
 		this.cart = cart;
-		this.exLoTr = exLoTr;
-//		new Thread(this).start();
 	}
 
 	@Override
 	public void run() {
-		while (heap.getQnt() > 0) {
+		while (heap.getQnt() >= 0) {
 			try {
+				cart.semaphore12.acquire();
 				System.out.println("Dulin start digging");
 				TimeUnit.SECONDS.sleep(2);
-				heap.setQnt(heap.getQnt()-6);
+				heap.setQnt(heap.getQnt()-1);
+				heap.setQnt(heap.getQnt()-1);
+				heap.setQnt(heap.getQnt()-1);
+				heap.setQnt(heap.getQnt()-1);
+				heap.setQnt(heap.getQnt()-1);
+				heap.setQnt(heap.getQnt()-1);
+				cart.setCartCapacity(6);
 				System.out.println("Ghimli! Cart is full!");
-				cart = exLoTr.exchange(cart);
 				System.out.println("Dulin relaxing...");
-				cart = exLoTr.exchange(null);
+				cart.semaphore23.release();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-//			if (heap.getQnt() == 0) {
-//			}
 		}
 		System.out.println("Hey Ho! Job done!");
 	}
